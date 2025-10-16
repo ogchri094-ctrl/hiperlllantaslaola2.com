@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendar Servicio - Hiperllantas La Ola</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="agendar.css">
+</head>
+<body>
+
+<section class="agendar">
+  <div class="container">
+    <h2><i class="ri-calendar-check-line"></i> Agenda tu servicio</h2>
+    <p>Selecciona tu sucursal, servicios y horario para reservar fácilmente.</p>
+
+    <form id="formAgenda">
+
+      <div class="form-group">
+        <label><i class="ri-user-3-line"></i> Nombre completo</label>
+        <input type="text" id="nombre" placeholder="Tu nombre" required>
+      </div>
+
+      <div class="form-group">
+        <label><i class="ri-map-pin-line"></i> Sucursal</label>
+        <select id="sucursal" required>
+          <option value="">Selecciona una sucursal</option>
+          <optgroup label="Sur">
+            <option>Bombas</option>
+            <option>División</option>
+            <option>San Lorenzo</option>
+            <option>Del Sur</option>
+          </optgroup>
+          <optgroup label="Norte">
+            <option>Misterios</option>
+            <option>Ticoman</option>
+            <option>Cuitlahuac</option>
+            <option>Viveros</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label><i class="ri-tools-line"></i> Servicios</label>
+        <div class="tarjetas-servicios">
+          <div class="tarjeta" data-servicio="Cambio de llantas">
+            <img src="cambiodellantas.jpg" alt="Cambio de llantas">
+            <span>Cambio de llantas</span>
+          </div>
+          <div class="tarjeta" data-servicio="Balanceo y alineación">
+            <img src="alineacion y balanceo.jpg" alt="Balanceo y alineación">
+            <span>Balanceo y alineación</span>
+          </div>
+          <div class="tarjeta" data-servicio="Cambio de frenos">
+            <img src="frenos.jpg" alt="Cambio de frenos">
+            <span>Cambio de frenos</span>
+          </div>
+          <div class="tarjeta" data-servicio="Suspensión">
+            <img src="suspencion.jpg" alt="Suspensión">
+            <span>Suspensión</span>
+          </div>
+          <div class="tarjeta" data-servicio="Mecánica general">
+            <img src="servicios de mecanica.jpg" alt="Mecánica general">
+            <span>Mecánica general</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group extras">
+        <label><i class="ri-add-line"></i> Extras</label>
+        <div class="extras-list">
+          <label><input type="checkbox" value="Venta de llantas"> Venta de llantas</label>
+          <label><input type="checkbox" value="Amortiguadores"> Amortiguadores</label>
+        </div>
+      </div>
+
+      <div class="form-group fecha-hora">
+        <div>
+          <label><i class="ri-calendar-line"></i> Fecha</label>
+          <input type="date" id="fecha" required>
+        </div>
+        <div>
+          <label><i class="ri-time-line"></i> Hora</label>
+          <input type="time" id="hora" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label><i class="ri-camera-line"></i> Fotos de tu auto (opcional)</label>
+        <input type="file" id="fotos-auto" accept="image/*" multiple>
+        <div class="preview" id="preview"></div>
+      </div>
+
+      <button type="submit" class="btn-whatsapp">
+        <i class="ri-whatsapp-line"></i> Agendar por WhatsApp
+      </button>
+
+    </form>
+
+    <div class="resumen" id="resumen" style="display:none;">
+      <h3><i class="ri-check-double-line"></i> Resumen de tu cita</h3>
+      <div id="detalles-cita"></div>
+    </div>
+
+  </div>
+</section>
+
+<script src="agendar.js"></script>
+</body>
+</html>
