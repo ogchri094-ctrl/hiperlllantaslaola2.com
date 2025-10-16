@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encuentra tu Llanta por Vehículo</title>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Outfit', sans-serif;
+  background: linear-gradient(135deg, #e0eafc, #cfdef3);
+  margin: 0;
+  padding: 0;
+  color: #222;
+}
+
+.buscador-container {
+  max-width: 700px;
+  margin: 60px auto;
+  padding: 50px 40px;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.buscador-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+
+h2 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 2rem;
+  margin-bottom: 35px;
+  color: #d00000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.campo {
+  position: relative;
+  margin: 18px 0;
+}
+
+select {
+  width: 100%;
+  padding: 14px 45px 14px 18px;
+  border-radius: 15px;
+  border: 1.5px solid #ccc;
+  outline: none;
+  font-size: 1rem;
+  background: rgba(255,255,255,0.95);
+  appearance: none;
+  transition: all 0.3s ease;
+}
+
+select:focus {
+  border-color: #d00000;
+  box-shadow: 0 0 8px rgba(208,0,0,0.35);
+}
+
+.campo i {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 1.3rem;
+  transition: color 0.3s;
+}
+
+select:focus + i {
+  color: #d00000;
+}
+
+button {
+  width: 100%;
+  padding: 16px;
+  margin-top: 22px;
+  background: linear-gradient(135deg, #ff3c00, #d00000);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #d00000, #ff3c00);
+}
+
+.resultado {
+  margin-top: 28px;
+  font-size: 1.1rem;
+  background: rgba(248,248,248,0.95);
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+}
+
+.resultado a {
+  display: inline-block;
+  margin-top: 12px;
+  background: #25d366;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.resultado a:hover {
+  background: #1ebe5b;
+}
+
+@media (max-width: 600px) {
+  .buscador-container {
+    padding: 35px 25px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="buscador-container">
+  <h2><i class="ri-tire-line"></i> Encuentra tu Llanta</h2>
+
+  <div class="campo">
+    <select id="marca"><option value="">Selecciona marca</option></select>
+    <i class="ri-car-line"></i>
+  </div>
+
+  <div class="campo">
+    <select id="modelo" disabled><option value="">Selecciona modelo</option></select>
+    <i class="ri-roadster-line"></i>
+  </div>
+
+  <div class="campo">
+    <select id="anio" disabled><option value="">Selecciona año</option></select>
+    <i class="ri-calendar-line"></i>
+  </div>
+
+  <div class="campo">
+    <select id="version" disabled><option value="">Selecciona versión</option></select>
+    <i class="ri-settings-3-line"></i>
+  </div>
+
+  <div class="campo">
+    <select id="medida" disabled><option value="">Selecciona medida</option></select>
+    <i class="ri-tire-line"></i>
+  </div>
+
+  <button id="buscar"><i class="ri-search-line"></i> Buscar llanta</button>
+  <div class="resultado" id="resultado"></div>
+</div>
+
+<script>
+const data = {
+  "Chevrolet": {
+    "Aveo": {
+      "2020": { "LT": "185/60R15", "LS": "195/55R16" },
+      "2022": { "Premier": "195/55R16", "Activ": "205/50R17" },
+      "2023": { "Sport": "205/55R17" }
+    },
+    "Onix": {
+      "2021": { "LT": "195/65R15", "Premier": "205/55R16" },
+      "2022": { "RS": "215/50R17" }
+    },
+    "Tracker": {
+      "2021": { "LS": "215/55R17", "LT": "225/50R18" }
+    }
+  },
+  "Nissan": {
+    "Versa": {
+      "2020": { "Sense": "185/65R15", "Advance": "195/55R16" },
+      "2023": { "Exclusive": "205/50R17" }
+    },
+    "Sentra": {
+      "2019": { "Sense": "195/65R15", "Advance": "205/55R16" },
+      "2021": { "SR": "215/45R17" }
+    },
+    "March": {
+      "2018": { "Active": "165/70R14", "Sense": "175/65R14" }
+    }
+  },
+  "Toyota": {
+    "Corolla": {
+      "2020": { "LE": "195/65R15", "SE": "205/55R16" },
+      "2023": { "XLE": "215/45R17" }
+    },
+    "Hilux": {
+      "2018": { "4x2": "225/70R15", "4x4": "265/65R17" }
+    },
+    "Yaris": {
+      "2021": { "Core": "185/60R15", "S": "195/55R16" }
+    }
+  },
+  "Volkswagen": {
+    "Jetta": {
+      "2019": { "Trendline": "195/65R15", "Comfortline": "205/55R16" },
+      "2022": { "R-Line": "225/45R17" }
+    },
+    "Tiguan": {
+      "2021": { "Comfortline": "215/65R17", "Highline": "235/55R18" }
+    }
+  },
+  "Honda": {
+    "Civic": {
+      "2020": { "LX": "215/55R16", "Sport": "235/40R18" },
+      "2022": { "Touring": "235/45R17" }
+    },
+    "CR-V": {
+      "2019": { "EX": "235/65R17", "Touring": "235/60R18" }
+    }
+  },
+  "Mazda": {
+    "3": {
+      "2019": { "iTouring": "205/55R16", "iGrand Touring": "225/45R17" }
+    },
+    "CX-5": {
+      "2021": { "Sport": "225/65R17", "Touring": "235/55R19" }
+    }
+  },
+  "Ford": {
+    "F-150": {
+      "2020": { "XL": "275/65R18", "Lariat": "275/55R20" },
+      "2022": { "Platinum": "285/45R22" }
+    },
+    "EcoSport": {
+      "2021": { "SE": "205/60R16", "Titanium": "215/55R17" }
+    }
+  }
+};
+
+// Referencias
+const marca = document.getElementById("marca");
+const modelo = document.getElementById("modelo");
+const anio = document.getElementById("anio");
+const version = document.getElementById("version");
+const medida = document.getElementById("medida");
+const resultado = document.getElementById("resultado");
+
+// Llenar marcas
+Object.keys(data).forEach(m => {
+  marca.innerHTML += `<option value="${m}">${m}</option>`;
+});
+
+marca.addEventListener("change", () => {
+  modelo.innerHTML = `<option value="">Selecciona modelo</option>`;
+  anio.innerHTML = `<option value="">Selecciona año</option>`;
+  version.innerHTML = `<option value="">Selecciona versión</option>`;
+  medida.innerHTML = `<option value="">Selecciona medida</option>`;
+  resultado.innerHTML = "";
+  
+  modelo.disabled = false;
+  anio.disabled = version.disabled = medida.disabled = true;
+  
+  const modelos = Object.keys(data[marca.value]);
+  modelos.forEach(mod => modelo.innerHTML += `<option value="${mod}">${mod}</option>`);
+});
+
+modelo.addEventListener("change", () => {
+  anio.innerHTML = `<option value="">Selecciona año</option>`;
+  anio.disabled = false;
+  version.disabled = medida.disabled = true;
+  
+  const anios = Object.keys(data[marca.value][modelo.value]);
+  anios.forEach(a => anio.innerHTML += `<option value="${a}">${a}</option>`);
+});
+
+anio.addEventListener("change", () => {
+  version.innerHTML = `<option value="">Selecciona versión</option>`;
+  version.disabled = false;
+  medida.disabled = true;
+  
+  const versiones = Object.keys(data[marca.value][modelo.value][anio.value]);
+  versiones.forEach(v => version.innerHTML += `<option value="${v}">${v}</option>`);
+});
+
+version.addEventListener("change", () => {
+  medida.innerHTML = `<option value="">Selecciona medida</option>`;
+  medida.disabled = false;
+  const m = data[marca.value][modelo.value][anio.value][version.value];
+  medida.innerHTML += `<option value="${m}">${m}</option>`;
+});
+
+document.getElementById("buscar").addEventListener("click", () => {
+  if (!medida.value) {
+    resultado.innerHTML = "⚠️ Por favor completa todos los campos.";
+    return;
+  }
+  
+  const link = `https://wa.me/5215512345678?text=Hola,%20quiero%20cotizar%20la%20llanta%20${medida.value}%20para%20mi%20${marca.value}%20${modelo.value}%20${anio.value}%20${version.value}`;
+  
+  resultado.innerHTML = `
+    ✅ <b>Medida recomendada:</b> ${medida.value}<br>
+    <a href="${link}" target="_blank">💬 Cotizar en WhatsApp</a>
+  `;
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+* { box-sizing: border-box; margin:0; padding:0; }
+
+body {
+  font-family:'Poppins', sans-serif;
+  background: linear-gradient(135deg,#f0f4f8,#d9e2ec);
+  color:#333;
+}
+
+.agendar { display:flex; justify-content:center; padding:50px 15px; }
+.container {
+  background:#fff; max-width:700px; width:100%;
+  border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.12);
+  padding:50px 40px; transition: transform 0.3s ease;
+}
+.container:hover { transform: translateY(-5px); }
+
+h2 { text-align:center; font-size:2rem; color:#0d6efd; margin-bottom:10px; }
+p { text-align:center; color:#555; margin-bottom:30px; }
+
+.form-group { margin-bottom:20px; }
+label { display:flex; align-items:center; font-weight:600; margin-bottom:8px; gap:6px; }
+input, select { width:100%; padding:12px 15px; border:1px solid #ccc; border-radius:12px; font-size:1rem; transition:border 0.3s, box-shadow 0.3s; }
+input:focus, select:focus { border-color:#0d6efd; box-shadow:0 0 8px rgba(13,110,253,0.3); outline:none; }
+
+.tarjetas-servicios { display:flex; flex-wrap:wrap; gap:15px; margin-top:10px; }
+.tarjeta { flex:1 0 150px; border:2px solid #ddd; border-radius:15px; overflow:hidden; text-align:center; cursor:pointer; transition:transform 0.3s, border-color 0.3s; background:#fafafa; }
+.tarjeta img { width:100%; height:100px; object-fit:cover; }
+.tarjeta span { display:block; padding:8px; font-weight:500; }
+.tarjeta:hover { transform:scale(1.05); border-color:#0d6efd; }
+.tarjeta.active { border-color:#0d6efd; background:#e0f0ff; }
+
+.extras-list { display:flex; gap:12px; flex-wrap:wrap; }
+.extras-list label { background:#f1f5f9; border:1px solid #d1d5db; padding:8px 14px; border-radius:12px; cursor:pointer; display:flex; align-items:center; gap:5px; }
+.extras-list input { margin-right:6px; }
+.extras-list label:hover { background:#e0e7ff; border-color:#0d6efd; }
+
+.fecha-hora { display:flex; gap:15px; }
+.fecha-hora div { flex:1; }
+
+.preview { display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; }
+.preview img { width:80px; height:80px; border-radius:12px; object-fit:cover; border:2px solid #0d6efd; }
+
+.btn-whatsapp { width:100%; background:#25D366; color:#fff; border:none; padding:15px; border-radius:15px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition: transform 0.2s, box-shadow 0.2s; }
+.btn-whatsapp:hover { background:#1ebe5d; transform:translateY(-2px); box-shadow:0 5px 15px rgba(0,0,0,0.2); }
+
+.resumen { background:#e6f4ff; border:2px solid #0d6efd; border-radius:15px; padding:20px; margin-top:25px; animation:fadeIn 0.5s ease-in-out; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+.aviso-flotante { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px); background:#0d6efd; color:white; padding:12px 20px; border-radius:12px; font-weight:600; box-shadow:0 5px 15px rgba(0,0,0,0.2); opacity:0; transition: all 0.4s ease; z-index:9999; }
+.aviso-flotante.mostrar { opacity:1; transform:translateX(-50%) translateY(0); }
+
+@media (max-width:500px) { .fecha-hora { flex-direction:column; } .tarjetas-servicios { flex-direction:column; } }

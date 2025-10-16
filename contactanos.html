@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hiperllantas La Ola - Contacto Ultra Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:#111;color:#fff;overflow-x:hidden;}
+h1,h2,h3{margin:0;}
+a{text-decoration:none;color:inherit;}
+.encabezado{display:flex;justify-content:space-between;align-items:center;padding:12px 30px;background:#111;position:sticky;top:0;z-index:100;}
+.encabezado nav a{margin:0 15px;font-weight:bold;color:#fff;transition:.3s;}
+.encabezado nav a:hover{color:#ff4d4d;}
+.btn-registro{background:#e60000;border:none;padding:10px 20px;border-radius:8px;color:#fff;cursor:pointer;display:flex;align-items:center;gap:5px;transition:.3s;font-weight:bold;}
+.btn-registro:hover{background:#ff1a1a;box-shadow:0 0 20px #ff4d4d;}
+.body-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden;}
+canvas#neonCanvas{width:100%;height:100%;display:block;}
+.contact-container{max-width:900px;margin:80px auto;padding:50px;background:linear-gradient(135deg,#ff4d4d,#e60000);border-radius:25px;box-shadow:0 15px 50px rgba(0,0,0,0.5);position:relative;z-index:1;}
+.contact-container h1{text-align:center;margin-bottom:30px;font-size:2.8rem;}
+.contact-form{display:flex;flex-direction:column;gap:20px;position:relative;}
+.contact-form input, .contact-form textarea{
+  padding:15px 20px;border-radius:12px;border:none;font-size:1rem;
+  outline:none;resize:none;background:rgba(255,255,255,0.1);color:#fff;
+  transition:.3s;
+}
+.contact-form input:focus, .contact-form textarea:focus{box-shadow:0 0 25px #ff4d4d;}
+.btn-submit{background:#fff;color:#e60000;font-weight:bold;padding:15px 25px;border:none;border-radius:12px;cursor:pointer;transition:.3s;align-self:center;}
+.btn-submit:hover{background:#ffcccc;box-shadow:0 0 30px #ff1a1a;transform:scale(1.05);}
+.info-contact{text-align:center;margin-top:40px;font-size:1.1rem;position:relative;z-index:1;}
+.info-contact i{margin-right:10px;color:#fff;}
+@media(max-width:768px){.contact-container{padding:35px;margin:50px 15px;}.contact-container h1{font-size:2.2rem;}}
+@media(max-width:480px){.contact-container h1{font-size:1.8rem;}}
+</style>
+</head>
+<body>
+
+<div class="body-bg"><canvas id="neonCanvas"></canvas></div>
+
+<header class="encabezado">
+<div class="div1"><img src="hiperllantaslaola.png" alt=""></div>
+<nav>
+<a href="index.html">HOME</a>
+<a href="sucursales.html">SUCURSALES</a>
+<a href="agendar.html">SERVICIOS</a>
+<a href="contactanos.html" class="active">CONTACTANOS</a>
+<a href="#">MAS</a>
+</nav>
+<button class="btn-registro"><i class="ri-user-line"></i> Registrarse</button>
+</header>
+
+<section class="contact-container">
+<h1>Contáctanos</h1>
+<form class="contact-form" id="contactForm">
+<input type="text" id="nombre" placeholder="Nombre completo" required>
+<input type="email" id="email" placeholder="Correo electrónico" required>
+<input type="text" id="telefono" placeholder="Teléfono" required>
+<textarea id="mensaje" rows="6" placeholder="Escribe tu mensaje..." required></textarea>
+<button type="submit" class="btn-submit">Enviar Mensaje</button>
+</form>
+<div class="info-contact">
+<p><i class="ri-map-pin-line"></i> Av. Principal #123, Ciudad</p>
+<p><i class="ri-phone-line"></i> 55-1234-5678</p>
+<p><i class="ri-mail-line"></i> contacto@hiperllantaslaola.com</p>
+</div>
+</section>
+
+<script>
+// Validación simple del formulario
+document.getElementById("contactForm").addEventListener("submit", e=>{
+  e.preventDefault();
+  const nombre=document.getElementById("nombre").value.trim();
+  const email=document.getElementById("email").value.trim();
+  const telefono=document.getElementById("telefono").value.trim();
+  const mensaje=document.getElementById("mensaje").value.trim();
+  if(nombre && email && telefono && mensaje){
+    alert("¡Gracias! Tu mensaje ha sido enviado.");
+    document.getElementById("contactForm").reset();
+  }else{
+    alert("Por favor completa todos los campos.");
+  }
+});
+
+// Partículas y estelas orbitando formulario
+const canvas=document.getElementById('neonCanvas');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+
+const bgParticles=[]; // fondo
+for(let i=0;i<200;i++){
+  bgParticles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    vx:(Math.random()-0.5)*0.5,
+    vy:(Math.random()-0.5)*0.5,
+    size:Math.random()*2+1,
+    color:['#ff1a1a','#ff4d4d','#ff9999','#ff6666'][Math.floor(Math.random()*4)]
+  });
+}
+
+// partículas orbitando campos del formulario
+const orbitParticles=[];
+const formElements=[...document.querySelectorAll('.contact-form input, .contact-form textarea, .btn-submit')];
+formElements.forEach(el=>{
+  const rect=el.getBoundingClientRect();
+  for(let i=0;i<8;i++){
+    const angle=Math.random()*Math.PI*2;
+    orbitParticles.push({
+      el:el,
+      angle:angle,
+      radius:rect.width/2 + Math.random()*10,
+      speed:0.02+Math.random()*0.02,
+      size:Math.random()*2+1,
+      color:['#ff1a1a','#ff4d4d','#ff9999','#ff6666'][Math.floor(Math.random()*4)]
+    });
+  }
+});
+
+let mouse={x:canvas.width/2,y:canvas.height/2};
+canvas.addEventListener('mousemove', e=>{mouse.x=e.clientX; mouse.y=e.clientY;});
+
+function draw(){
+  ctx.fillStyle='rgba(17,17,17,0.3)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // fondo
+  bgParticles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>canvas.width)p.vx*=-1;
+    if(p.y<0||p.y>canvas.height)p.vy*=-1;
+    ctx.beginPath();
+    ctx.fillStyle=p.color;
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fill();
+    const dx=mouse.x-p.x, dy=mouse.y-p.y, d=Math.sqrt(dx*dx+dy*dy);
+    if(d<120){
+      ctx.beginPath();
+      ctx.strokeStyle=`rgba(255,77,77,${1-d/120})`;
+      ctx.lineWidth=1;
+      ctx.moveTo(p.x,p.y);
+      ctx.lineTo(mouse.x,mouse.y);
+      ctx.stroke();
+    }
+  });
+
+  // orbitando campos
+  orbitParticles.forEach(p=>{
+    const rect=p.el.getBoundingClientRect();
+    const cx=rect.left + rect.width/2;
+    const cy=rect.top + rect.height/2;
+    p.angle+=p.speed;
+    const x=cx + Math.cos(p.angle)*p.radius;
+    const y=cy + Math.sin(p.angle)*p.radius;
+    ctx.beginPath();
+    ctx.fillStyle=p.color;
+    ctx.arc(x,y,p.size,0,Math.PI*2);
+    ctx.fill();
+
+    // lineas al cursor
+    const dx=mouse.x-x, dy=mouse.y-y, dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<100){
+      ctx.beginPath();
+      ctx.strokeStyle=`rgba(255,77,77,${1-dist/100})`;
+      ctx.lineWidth=1;
+      ctx.moveTo(x,y);
+      ctx.lineTo(mouse.x,mouse.y);
+      ctx.stroke();
+    }
+  });
+
+  requestAnimationFrame(draw);
+}
+draw();
+window.addEventListener('resize', ()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
+</script>
+</body>
+</html>

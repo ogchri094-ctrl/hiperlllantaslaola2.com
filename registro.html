@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hiperllantas La Ola - Registro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:#0a0f25;color:#fff;overflow-x:hidden;}
+h1,h2,h3{margin:0;}
+a{text-decoration:none;color:inherit;}
+.encabezado{display:flex;justify-content:space-between;align-items:center;padding:12px 30px;background:#0a0f25;position:sticky;top:0;z-index:100;}
+.encabezado nav a{margin:0 15px;font-weight:bold;color:#fff;transition:.3s;}
+.encabezado nav a:hover{color:#00cfff;}
+.btn-registro{background:#00aaff;border:none;padding:10px 20px;border-radius:8px;color:#fff;cursor:pointer;display:flex;align-items:center;gap:5px;transition:.3s;font-weight:bold;}
+.btn-registro:hover{background:#00d0ff;box-shadow:0 0 20px #00f0ff;}
+.body-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden;}
+canvas#neonCanvas{width:100%;height:100%;display:block;}
+.register-container{max-width:500px;margin:80px auto;padding:50px;background:linear-gradient(135deg,#00aaff,#0090ff);border-radius:25px;box-shadow:0 15px 50px rgba(0,0,0,0.5);position:relative;z-index:1;}
+.register-container h1{text-align:center;margin-bottom:30px;font-size:2.8rem;}
+.register-form{display:flex;flex-direction:column;gap:20px;position:relative;}
+.register-form input{
+  padding:15px 20px;border-radius:12px;border:none;font-size:1rem;
+  outline:none;background:rgba(255,255,255,0.1);color:#fff;transition:.3s;
+}
+.register-form input:focus{box-shadow:0 0 25px #00ffff;}
+.btn-submit{background:#fff;color:#00aaff;font-weight:bold;padding:15px 25px;border:none;border-radius:12px;cursor:pointer;transition:.3s;align-self:center;}
+.btn-submit:hover{background:#ccf2ff;box-shadow:0 0 30px #00f0ff;transform:scale(1.05);}
+.info-register{text-align:center;margin-top:20px;font-size:1rem;position:relative;z-index:1;}
+.info-register a{color:#fff;font-weight:bold;transition:.3s;}
+.info-register a:hover{color:#ccf2ff;}
+@media(max-width:480px){.register-container{padding:30px;margin:50px 15px;}.register-container h1{font-size:2rem;}}
+</style>
+</head>
+<body>
+
+<div class="body-bg"><canvas id="neonCanvas"></canvas></div>
+
+
+
+<section class="register-container">
+<h1>Registro de Usuario</h1>
+<form class="register-form" id="registerForm">
+<input type="text" id="nombre" placeholder="Nombre completo" required>
+<input type="email" id="email" placeholder="Correo electrónico" required>
+<input type="text" id="telefono" placeholder="Teléfono" required>
+<input type="password" id="password" placeholder="Contraseña" required>
+<input type="password" id="confirmPassword" placeholder="Confirmar contraseña" required>
+<button type="submit" class="btn-submit">Crear Cuenta</button>
+</form>
+<div class="info-register">
+<p>¿Ya tienes cuenta? <a href="contactanos.html">Inicia sesión</a></p>
+</div>
+</section>
+
+<script>
+// Validación del formulario
+document.getElementById("registerForm").addEventListener("submit", e=>{
+  e.preventDefault();
+  const nombre=document.getElementById("nombre").value.trim();
+  const email=document.getElementById("email").value.trim();
+  const telefono=document.getElementById("telefono").value.trim();
+  const password=document.getElementById("password").value.trim();
+  const confirmPassword=document.getElementById("confirmPassword").value.trim();
+
+  if(!nombre||!email||!telefono||!password||!confirmPassword){
+    alert("Por favor completa todos los campos.");
+    return;
+  }
+  if(password!==confirmPassword){
+    alert("Las contraseñas no coinciden.");
+    return;
+  }
+  alert("¡Registro exitoso!");
+  document.getElementById("registerForm").reset();
+});
+
+// Fondo de partículas azul cielo
+const canvas=document.getElementById('neonCanvas');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+
+const bgParticles=[];
+for(let i=0;i<250;i++){
+  bgParticles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    vx:(Math.random()-0.5)*0.7,
+    vy:(Math.random()-0.5)*0.7,
+    size:Math.random()*2+1,
+    color:['#00f0ff','#00cfff','#00aaff','#0090ff'][Math.floor(Math.random()*4)]
+  });
+}
+
+const orbitParticles=[];
+const formElements=[...document.querySelectorAll('.register-form input, .btn-submit')];
+formElements.forEach(el=>{
+  const rect=el.getBoundingClientRect();
+  for(let i=0;i<6;i++){
+    const angle=Math.random()*Math.PI*2;
+    orbitParticles.push({
+      el:el,
+      angle:angle,
+      radius:rect.width/2 + Math.random()*15,
+      speed:0.01+Math.random()*0.02,
+      size:Math.random()*2+1,
+      color:['#00f0ff','#00cfff','#00aaff','#0090ff'][Math.floor(Math.random()*4)]
+    });
+  }
+});
+
+let mouse={x:canvas.width/2,y:canvas.height/2};
+canvas.addEventListener('mousemove', e=>{mouse.x=e.clientX; mouse.y=e.clientY;});
+
+function draw(){
+  ctx.fillStyle='rgba(10,15,37,0.3)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // fondo
+  bgParticles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>canvas.width)p.vx*=-1;
+    if(p.y<0||p.y>canvas.height)p.vy*=-1;
+    ctx.beginPath();
+    ctx.fillStyle=p.color;
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fill();
+    const dx=mouse.x-p.x, dy=mouse.y-p.y, d=Math.sqrt(dx*dx+dy*dy);
+    if(d<120){
+      ctx.beginPath();
+      ctx.strokeStyle=`rgba(0,255,255,${1-d/120})`;
+      ctx.lineWidth=1;
+      ctx.moveTo(p.x,p.y);
+      ctx.lineTo(mouse.x,mouse.y);
+      ctx.stroke();
+    }
+  });
+
+  // orbitando campos
+  orbitParticles.forEach(p=>{
+    const rect=p.el.getBoundingClientRect();
+    const cx=rect.left + rect.width/2;
+    const cy=rect.top + rect.height/2;
+    p.angle+=p.speed;
+    const x=cx + Math.cos(p.angle)*p.radius;
+    const y=cy + Math.sin(p.angle)*p.radius;
+    ctx.beginPath();
+    ctx.fillStyle=p.color;
+    ctx.arc(x,y,p.size,0,Math.PI*2);
+    ctx.fill();
+
+    const dx=mouse.x-x, dy=mouse.y-y, dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<100){
+      ctx.beginPath();
+      ctx.strokeStyle=`rgba(0,255,255,${1-dist/100})`;
+      ctx.lineWidth=1;
+      ctx.moveTo(x,y);
+      ctx.lineTo(mouse.x,mouse.y);
+      ctx.stroke();
+    }
+  });
+
+  requestAnimationFrame(draw);
+}
+draw();
+window.addEventListener('resize', ()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
+</script>
+</body>
+</html>

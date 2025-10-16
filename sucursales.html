@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Encuentra tu Taller | Hiperllantas La Ola</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <style>
+    * {margin:0;padding:0;box-sizing:border-box}
+    body {font-family:"Outfit",sans-serif;background:#f7f8fa;color:#222;}
+    header {background:linear-gradient(90deg,#b40000,#ff3838);color:white;padding:15px 40px;display:flex;justify-content:space-between;align-items:center;}
+    header img {height:60px;}
+    nav a {color:white;margin:0 12px;text-decoration:none;font-weight:600;}
+    nav a:hover {text-decoration:underline;}
+    .contenedor {max-width:1200px;margin:40px auto;text-align:center;}
+    h1 {font-size:2em;margin-bottom:10px;color:#b40000;}
+    p.descripcion {font-size:1.1em;color:#444;margin-bottom:30px;}
+    .buscador {display:flex;justify-content:center;gap:10px;margin-bottom:30px;}
+    input[type="text"] {padding:12px 15px;border:2px solid #b40000;border-radius:8px;width:250px;font-size:1em;}
+    button {background:linear-gradient(90deg,#b40000,#ff3838);border:none;color:white;padding:12px 18px;border-radius:8px;cursor:pointer;font-weight:600;transition:0.3s;}
+    button:hover {opacity:0.85;}
+    #map {width:100%;height:450px;border-radius:12px;margin-top:30px;box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+    .grid-talleres {display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:40px;}
+    .taller-card {background:white;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08);overflow:hidden;transition:transform 0.3s;}
+    .taller-card:hover {transform:translateY(-5px);}
+    .taller-card img {width:100%;height:180px;object-fit:cover;}
+    .info {padding:15px;text-align:left;}
+    .info h3 {color:#b40000;font-size:1.2em;margin-bottom:8px;}
+    .info p {color:#555;font-size:0.95em;margin-bottom:6px;}
+    .info a {display:inline-block;background:#25D366;color:white;padding:8px 12px;border-radius:6px;text-decoration:none;font-weight:600;margin-top:8px;}
+    .info a i {margin-right:5px;}
+    .distancia {font-weight:bold;color:#b40000;}
+    .btn-ubicacion {
+      position:fixed;bottom:30px;right:30px;
+      background:#ff3838;color:#fff;border:none;border-radius:50%;
+      width:60px;height:60px;font-size:24px;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 4px 15px rgba(0,0,0,0.2);
+      cursor:pointer;transition:transform 0.3s,opacity 0.3s;
+    }
+    .btn-ubicacion:hover {transform:scale(1.1);opacity:0.9;}
+    .btn-ubicacion i {font-size:28px;}
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="hiperllantaslaola.png" alt="Logo" />
+  <nav>
+    <a href="index.html">HOME</a>
+    <a href="#">SERVICIOS</a>
+    <a href="#">CATÁLOGO</a>
+    <a href="#">CONTACTO</a>
+  </nav>
+</header>
+
+<section class="contenedor">
+  <h1>Encuentra tu taller más cercano</h1>
+  <p class="descripcion">Permite tu ubicación o ingresa tu código postal para ver el taller más cercano y cómo llegar.</p>
+
+  <div class="buscador">
+    <input type="text" id="cp" placeholder="Ej. 07000" />
+    <button onclick="buscarPorCP()">Buscar</button>
+  </div>
+
+  <div id="map"></div>
+  <div class="grid-talleres" id="lista-talleres"></div>
+</section>
+
+<button class="btn-ubicacion" onclick="usarUbicacion()">
+  <i class="ri-map-pin-user-fill"></i>
+</button>
+
+<script>
+const talleres = [
+  {
+    nombre: "Hiperllantas Norte - Misterios",
+    lat: 19.483, lng: -99.156,
+    direccion: "Calle Misterios #45, Col. San Miguel, CDMX Norte",
+    horario: "Lun-Sáb: 8:00-18:00",
+    img: "https://images.unsplash.com/photo-1581090700227-1e37b190418e",
+    tel: "525512345678"
+  },
+  {
+    nombre: "Hiperllantas Norte - Ticoman",
+    lat: 19.502, lng: -99.129,
+    direccion: "Av. Ticoman #100, CDMX Norte",
+    horario: "Lun-Sáb: 8:00-18:00",
+    img: "https://images.unsplash.com/photo-1597004895281-bf3a2a05e0da",
+    tel: "525598765432"
+  },
+  {
+    nombre: "Hiperllantas Norte - Cuitlahuac",
+    lat: 19.487, lng: -99.146,
+    direccion: "Cuitlahuac #500, CDMX Norte",
+    horario: "Lun-Sáb: 9:00-19:00",
+    img: "https://images.unsplash.com/photo-1623689047424-cbe1cc1d39e9",
+    tel: "525523456789"
+  },
+  {
+    nombre: "Hiperllantas Sur - Viveros",
+    lat: 19.346, lng: -99.189,
+    direccion: "Viveros #120, CDMX Sur",
+    horario: "Lun-Dom: 8:00-20:00",
+    img: "https://images.unsplash.com/photo-1602524813360-89be0f0d9d2f",
+    tel: "525512398765"
+  },
+  {
+    nombre: "Hiperllantas Sur - Bombas",
+    lat: 19.387, lng: -99.153,
+    direccion: "Bombas #300, CDMX Sur",
+    horario: "Lun-Sáb: 8:00-18:00",
+    img: "https://images.unsplash.com/photo-1619860610114-cf28b1185e60",
+    tel: "525587654321"
+  },
+  {
+    nombre: "Hiperllantas Sur - División",
+    lat: 19.390, lng: -99.145,
+    direccion: "División #200, CDMX Sur",
+    horario: "Lun-Sáb: 8:00-18:00",
+    img: "https://images.unsplash.com/photo-1619860610114-cf28b1185e60",
+    tel: "525587654322"
+  },
+  {
+    nombre: "Hiperllantas Sur - San Lorenzo",
+    lat: 19.395, lng: -99.140,
+    direccion: "San Lorenzo #150, CDMX Sur",
+    horario: "Lun-Sáb: 8:00-18:00",
+    img: "https://images.unsplash.com/photo-1619860610114-cf28b1185e60",
+    tel: "525587654323"
+  }
+];
+
+
+
+const map = L.map("map").setView([19.43, -99.15], 11);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "&copy; OpenStreetMap contributors" }).addTo(map);
+
+// Marcadores de todos los talleres
+talleres.forEach(t => L.marker([t.lat, t.lng]).addTo(map).bindPopup(`<b>${t.nombre}</b><br>${t.direccion}`));
+
+let routeLayer;
+let userMarker;
+
+navigator.geolocation.getCurrentPosition(pos => {
+  const { latitude, longitude } = pos.coords;
+  map.setView([latitude, longitude], 12);
+  userMarker = L.marker([latitude, longitude]).addTo(map).bindPopup("📍 Estás aquí").openPopup();
+  mostrarMasCercano(latitude, longitude);
+}, () => mostrarLista(talleres));
+
+function usarUbicacion() {
+  navigator.geolocation.getCurrentPosition(pos => {
+    const { latitude, longitude } = pos.coords;
+    if (userMarker) map.removeLayer(userMarker);
+    userMarker = L.marker([latitude, longitude]).addTo(map).bindPopup("📍 Estás aquí").openPopup();
+    map.setView([latitude, longitude], 13, {animate:true});
+    mostrarMasCercano(latitude, longitude);
+  }, () => alert("No se pudo obtener la ubicación. Verifica permisos."));
+}
+
+function buscarPorCP() {
+  const cp = document.getElementById("cp").value.trim();
+  if (!cp) return;
+  fetch(`https://nominatim.openstreetmap.org/search?postalcode=${cp}&country=mexico&format=json`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.length > 0) {
+        const { lat, lon } = data[0];
+        map.setView([lat, lon], 12);
+        mostrarMasCercano(lat, lon);
+      } else alert("No se encontró el código postal.");
+    });
+}
+
+function mostrarMasCercano(lat, lon) {
+  const distancia = (a, b) => Math.sqrt((a.lat - b.lat) ** 2 + (a.lng - b.lng) ** 2);
+  const masCercano = talleres.reduce((prev, curr) => distancia(curr, { lat, lng: lon }) < distancia(prev, { lat, lng: lon }) ? curr : prev);
+  mostrarLista([masCercano]);
+  dibujarRuta(lat, lon, masCercano.lat, masCercano.lng, masCercano);
+}
+
+function mostrarLista(lista) {
+  const cont = document.getElementById("lista-talleres");
+  cont.innerHTML = "";
+  lista.forEach(t => {
+    cont.innerHTML += `
+      <div class="taller-card">
+        <img src="${t.img}" alt="${t.nombre}">
+        <div class="info">
+          <h3>${t.nombre}</h3>
+          <p><strong>Dirección:</strong> ${t.direccion}</p>
+          <p><strong>Horario:</strong> ${t.horario}</p>
+          <p class="distancia" id="dist-${t.nombre.replace(/\s/g, "")}"></p>
+          <a href="https://wa.me/${t.tel}?text=${encodeURIComponent("Hola, quiero agendar una cita en " + t.nombre)}" target="_blank">
+            <i class="ri-whatsapp-fill"></i> Contactar
+          </a>
+        </div>
+      </div>`;
+  });
+}
+
+function dibujarRuta(lat1, lon1, lat2, lon2, taller) {
+  if (routeLayer) map.removeLayer(routeLayer);
+  fetch(`https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&geometries=geojson`)
+    .then(res => res.json())
+    .then(data => {
+      const route = data.routes[0];
+      const distanceKm = (route.distance / 1000).toFixed(2);
+      const tiempoMin = Math.round(route.duration / 60);
+      document.getElementById("dist-" + taller.nombre.replace(/\s/g, "")).innerText = `Distancia: ${distanceKm} km • Tiempo: ${tiempoMin} min`;
+      routeLayer = L.geoJSON(route.geometry, { color: "#b40000", weight: 4 }).addTo(map);
+      map.fitBounds(routeLayer.getBounds());
+    });
+}
+</script>
+
+</body>
+</html>
