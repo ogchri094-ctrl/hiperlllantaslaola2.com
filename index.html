@@ -679,7 +679,36 @@ document.getElementById("btnWhatsappCat").addEventListener("click", () => {
 
 
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+<script>
+  // Toggle nav panel (hamburger)
+  (function(){
+    const ham = document.querySelector('.hamburger');
+    const panel = document.querySelector('.nav-panel');
+    const navLinks = document.querySelectorAll('.nav-panel .nav-links a');
+
+    if(ham && panel){
+      ham.addEventListener('click', ()=> panel.classList.toggle('open'));
+      navLinks.forEach(a => a.addEventListener('click', ()=> panel.classList.remove('open')));
+      // close panel on ESC
+      document.addEventListener('keydown', e => { if(e.key === 'Escape') panel.classList.remove('open') });
+    }
+
+    // Carrusel flechas (cards)
+    const leftBtn = document.querySelector('.btn-flecha.izquierda');
+    const rightBtn = document.querySelector('.btn-flecha.derecha');
+    const scroller = document.querySelector('.contenedor-cards');
+
+    if(scroller && leftBtn && rightBtn){
+      const step = scroller.clientWidth * 0.6;
+      leftBtn.addEventListener('click', ()=> scroller.scrollBy({left: -step, behavior:'smooth'}));
+      rightBtn.addEventListener('click', ()=> scroller.scrollBy({left: step, behavior:'smooth'}));
+      // resize listener to recalc
+      window.addEventListener('resize', ()=> { /* no-op: browser recalculates layout */ });
+    }
+  })();
+</script>
 
 <script src="script.js"></script>
 </body>
 </html>
+
